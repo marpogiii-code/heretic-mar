@@ -50,6 +50,9 @@ DEFAULT_REPEAT_PENALTY = _env_float("DEFAULT_REPEAT_PENALTY", 1.1)
 # Handy for developing/testing the UI without ~48 GB of weights.
 MOCK_MODEL = os.environ.get("MOCK_MODEL", "0") == "1"
 
+# Force the UI into dark mode on load (users can still switch via ?__theme=).
+FORCE_DARK = os.environ.get("FORCE_DARK", "0") == "1"
+
 # Gradio server settings.
 SERVER_NAME = os.environ.get("SERVER_NAME", "0.0.0.0")
 SERVER_PORT = _env_int("SERVER_PORT", 7860)

@@ -106,12 +106,24 @@ def build_demo() -> gr.Blocks:
             config.DEFAULT_REPEAT_PENALTY,
         ]
 
+    # When FORCE_DARK is set, redirect to the dark theme on first load.
+    force_dark_js = """
+    () => {
+        const url = new URL(window.location);
+        if (url.searchParams.get('__theme') !== 'dark') {
+            url.searchParams.set('__theme', 'dark');
+            window.location.replace(url.href);
+        }
+    }
+    """
+
     demo = gr.ChatInterface(
         fn=respond,
         type="messages",
         title="\U0001F4D6 Llama Heretic Storyteller",
         description=description,
         theme=gr.themes.Soft(primary_hue="purple"),
+        js=force_dark_js if config.FORCE_DARK else None,
         chatbot=gr.Chatbot(type="messages", height=560, show_copy_button=True),
         additional_inputs=[
             mode,

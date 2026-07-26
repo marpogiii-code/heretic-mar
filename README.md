@@ -53,6 +53,11 @@ MOCK_MODEL=1 python app.py
 Mock mode skips the download/load and uses a canned echo backend so you can work
 on the interface instantly.
 
+### Dark mode
+
+Append `?__theme=dark` to the URL (e.g. `http://localhost:7860/?__theme=dark`),
+or launch with `FORCE_DARK=1` to default to dark mode.
+
 ## Configuration (environment variables)
 
 | Variable | Default | Description |
@@ -65,6 +70,7 @@ on the interface instantly.
 | `N_THREADS` | CPU count | CPU threads |
 | `N_BATCH` | `512` | Batch size |
 | `MOCK_MODEL` | `0` | `1` = skip model, use echo backend |
+| `FORCE_DARK` | `0` | `1` = launch the UI in dark mode |
 | `SERVER_NAME` / `SERVER_PORT` | `0.0.0.0` / `7860` | Gradio bind address/port |
 | `SHARE` | `0` | `1` = create a public Gradio share link |
 
