@@ -40,7 +40,11 @@ CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
 ```bash
 python app.py
 ```
-
+## Hint
+```
+CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
+pip install -r requirements.txt
+```
 Then open http://localhost:7860. On first launch the model weights (~48 GB) are
 downloaded from Hugging Face and cached.
 
