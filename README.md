@@ -40,13 +40,35 @@ CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
 ```bash
 python app.py
 ```
-## Hint
-```
-CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
-pip install -r requirements.txt
-```
+
 Then open http://localhost:7860. On first launch the model weights (~48 GB) are
 downloaded from Hugging Face and cached.
+
+## Recommended: connect to a `llama-server` (avoids the llama-cpp-python build)
+
+`llama-cpp-python` vendors a **pinned, often older** copy of llama.cpp. If a
+newer GGUF (like this heretic-v2 build) loads fine in the standalone
+`llama-server` but fails in-process with
+`ValueError: Failed to load model from file`, the Python library's bundled
+llama.cpp is simply too old to parse it. Rather than fight the build, point the
+app at your working `llama-server`, which exposes an OpenAI-compatible API.
+
+1. Start the server (from your llama.cpp build) with the model:
+
+   ```bash
+   ./build/bin/llama-server -ngl -1 \
+     -m ~/.cache/huggingface/hub/models--mradermacher--Llama-3.3-70B-Instruct-heretic-v2-i1-GGUF/snapshots/*/Llama-3.3-70B-Instruct-heretic-v2.i1-Q5_K_M.gguf
+   # listens on http://127.0.0.1:8080
+   ```
+
+2. Point the app at it and launch (note the `/v1` suffix):
+
+   ```bash
+   LLAMA_API_BASE_URL=http://127.0.0.1:8080/v1 python app.py
+   ```
+
+The app then streams from the server over HTTP — no in-process model load, so
+`llama-cpp-python` doesn't even need to import successfully.
 
 ### Develop the UI without the weights
 
@@ -74,6 +96,10 @@ or launch with `FORCE_DARK=1` to default to dark mode.
 | `N_THREADS` | CPU count | CPU threads |
 | `N_BATCH` | `512` | Batch size |
 | `MOCK_MODEL` | `0` | `1` = skip model, use echo backend |
+| `LLAMA_API_BASE_URL` | *(empty)* | If set (e.g. `http://127.0.0.1:8080/v1`), stream from that OpenAI-compatible server instead of loading in-process |
+| `LLAMA_API_KEY` | *(empty)* | Optional bearer token for the server |
+| `LLAMA_API_MODEL` | `local-model` | Model name sent to the server (llama-server ignores it) |
+| `LLAMA_API_TIMEOUT` | `600` | Request timeout (seconds) for the server |
 | `FORCE_DARK` | `0` | `1` = launch the UI in dark mode |
 | `SERVER_NAME` / `SERVER_PORT` | `0.0.0.0` / `7860` | Gradio bind address/port |
 | `SHARE` | `0` | `1` = create a public Gradio share link |

@@ -146,8 +146,12 @@ def build_demo() -> gr.Blocks:
 
 
 def main() -> None:
-    if not config.MOCK_MODEL:
-        print("Loading model (this downloads ~48 GB on first run)...")
+    if config.MOCK_MODEL:
+        print("Running in MOCK mode (no model loaded).")
+    elif MODEL.server_mode:
+        print(f"Using OpenAI-compatible server at {config.API_BASE_URL}")
+    else:
+        print("Loading model in-process (downloads ~48 GB on first run)...")
         MODEL.load()
         print("Model ready.")
     demo = build_demo()
