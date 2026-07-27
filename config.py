@@ -50,6 +50,18 @@ DEFAULT_REPEAT_PENALTY = _env_float("DEFAULT_REPEAT_PENALTY", 1.1)
 # Handy for developing/testing the UI without ~48 GB of weights.
 MOCK_MODEL = os.environ.get("MOCK_MODEL", "0") == "1"
 
+# Point the app at an already-running OpenAI-compatible server (e.g. llama.cpp's
+# `llama-server`) instead of loading the GGUF in-process with llama-cpp-python.
+# Set to the /v1 base URL, e.g. "http://127.0.0.1:8080/v1". When empty, the
+# app loads the model in-process via llama-cpp-python.
+API_BASE_URL = os.environ.get("LLAMA_API_BASE_URL", "").rstrip("/")
+# Optional API key and model name for the server (llama-server ignores the
+# model name and accepts any key by default).
+API_KEY = os.environ.get("LLAMA_API_KEY", "")
+API_MODEL = os.environ.get("LLAMA_API_MODEL", "local-model")
+# Request timeout (seconds) when talking to the server.
+API_TIMEOUT = _env_int("LLAMA_API_TIMEOUT", 600)
+
 # Force the UI into dark mode on load (users can still switch via ?__theme=).
 FORCE_DARK = os.environ.get("FORCE_DARK", "0") == "1"
 
