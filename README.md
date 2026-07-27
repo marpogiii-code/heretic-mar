@@ -28,12 +28,39 @@ powered by [`mradermacher/Llama-3.3-70B-Instruct-heretic-v2-i1-GGUF`](https://hu
 pip install -r requirements.txt
 ```
 
-To build `llama-cpp-python` with GPU acceleration, install it with the matching
-backend flags before the rest, e.g. CUDA:
+### GPU (CUDA) acceleration
+
+Install a GPU build of `llama-cpp-python` **before** `requirements.txt`. The
+simplest, most reliable way is a **prebuilt CUDA wheel** (no local compile):
+
+```bash
+# Check your CUDA version first (top-right of `nvidia-smi`), then pick a tag <= it.
+pip install llama-cpp-python \
+  --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cu121
+# tags: cu121 / cu122 / cu123 / cu124
+pip install -r requirements.txt
+```
+
+The prebuilt wheel bundles its own CUDA runtime, so `nvcc`/host-compiler
+versions don't matter.
+
+<details>
+<summary>Building from source instead</summary>
 
 ```bash
 CMAKE_ARGS="-DGGML_CUDA=on" pip install llama-cpp-python
 ```
+
+If the CUDA compile fails with `parameter packs not expanded with '...'` in
+`std_function.h`, your `nvcc` (CUDA 11.x) is incompatible with GCC 11 — point it
+at an older host compiler:
+
+```bash
+sudo apt-get install -y g++-10
+CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_HOST_COMPILER=/usr/bin/g++-10" \
+  pip install llama-cpp-python --force-reinstall --no-cache-dir
+```
+</details>
 
 ## Run
 
